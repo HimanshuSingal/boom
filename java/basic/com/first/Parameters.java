@@ -16,8 +16,8 @@ import android.widget.Toast;
 public class Parameters {
     public static int turn ;
     public static Queue<Integer> queue = new LinkedList<Integer>();
-    public static int col_size=8;
-    public static int row_size=10;
+    public static int col_size=4;
+    public static int row_size=5;
     int i=0;
     int j=0;
     //public static int[][] num=new int[row_size][col_size];

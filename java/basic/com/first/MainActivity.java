@@ -14,74 +14,95 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+import basic.com.*;
 
 
 public class MainActivity extends AppCompatActivity {
 
     public static TextView msg;
-    public static int tu ;
+    public static int tu1= 1 ;
+    public static int tu2 ;
+    Client user ;
     public int score;
+    String response ;
     public GridView gridview;
     public Context a;
+    boolean waiting = false;
+    Button sd ;
+    Button md ;
+    int rr ;
 
-
+    void makechanges(int rr){
+        if(rr!=-1) {
+            score++;
+            gridview.setAdapter(new ImageAdapter(a));
+        }
+        else if(rr==0){
+            Toast.makeText(MainActivity.this, "Game Over!"+score  ,
+                    Toast.LENGTH_SHORT).show();score=0;}
+        if(score>=2)
+        {
+            boolean test=Parameters.checkEnd();
+            if(test) {
+                Toast.makeText(MainActivity.this, "Game Over!" + score,
+                        Toast.LENGTH_SHORT).show();
+                score = 0;
+            }
+        }
+    }
+    void initial(){
+        tu2 = (tu1+1)%3 == 0? 1 : 2 ;
+        score = 0 ;
+        if(tu1 == 2 ) {
+            int p =1 ;
+            waiting = true;
+            user.rec= true;
+            while(!user.updated){
+            }
+            p = user.recval  ;
+            waiting = false;
+            rr = Parameters.clicked(p, 1);
+            makechanges(rr);
+        }
+    }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
+        user = new Client("localhost",45353,response);
+       user.execute();
+        while(!user.updated){
 
-        tu = 1 ;
-        score = 0 ;
+        }
+        tu1 = user.recval ;
+        user.updated = false;
+      //  user.sendval = 3 ;
+        //user.send = true ;
         gridview = (GridView) findViewById(R.id.gridview);
         gridview.setNumColumns(Parameters.col_size);
         new Parameters();
         gridview.setAdapter(new ImageAdapter(this));
         a=this;
+        initial();
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-               int  rr =  Parameters.clicked(position, tu);
-                if(rr!=-1) {
-                    score++;
 
-                    gridview.setAdapter(new ImageAdapter(a));
-                    changetu();
-                }
-                //when same states appear again and again
-                if(rr==0){
-                    Toast.makeText(MainActivity.this, "Game Over!"+score  ,
-                       Toast.LENGTH_SHORT).show();score=0;}
-                if(score>=2)
-                {
-                    boolean test=Parameters.checkEnd();
-                    if(test) {
-                        Toast.makeText(MainActivity.this, "Game Over!" + score,
-                                Toast.LENGTH_SHORT).show();
-                        score = 0;
+                    rr = Parameters.clicked(position, tu1);
+                    makechanges(rr);
+                    user.sendval = position ;
+                    user.send = true ;
+                    int position2 = 1;
+                    user.rec = true ;
+                    while(!user.updated) {
                     }
+                   position2 =  user.recval ;
+                    rr = Parameters.clicked(position2, tu2);
+                    makechanges(rr);
             }
-            }
-           public void changetu(){
-               if(tu==1)tu=2;
-               else tu=1;
-           }
         });
 
-
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "lets see", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
 
