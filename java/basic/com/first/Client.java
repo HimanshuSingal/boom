@@ -37,6 +37,8 @@ public class Client extends AsyncTask<Void, Void, Void> {
     public Socket socket ;
     String response = "";
     boolean send = false ;
+    int player1 ;
+    int player2 ;
     boolean updated = false;
     int sendval ;
     int recval ;
@@ -65,6 +67,8 @@ public class Client extends AsyncTask<Void, Void, Void> {
             //sendToServer(2);
             //sendToServer(2);
        recval  = inputfromserver() ;
+            player1 = recval ;
+            player2 = (1+player1)%3==0?1:2;
             updated = true;
 
         } catch (UnknownHostException e) {
@@ -79,32 +83,21 @@ public class Client extends AsyncTask<Void, Void, Void> {
             connected = false;
         }
         while(true){
-
             if(send){
-                sendToServer(sendval);
+                sendToServer(sendval) ;
                 send = false;
             }
             if(rec){
-                updated = false;
-                recval = inputfromserver() ;
-                updated = true;
+                updated = false ;
+                recval=inputfromserver() ;
+                updated  =true;
                 rec= false;
             }
         }
+
     }
 
     public  void sendToServer(int x){
-     /*   connected = true;
-        DataOutputStream outToServer = null;
-        BufferedReader infromserver = null ;
-        try {
-            socket = new Socket("10.8.19.218", 6789);
-            outToServer = new DataOutputStream(socket.getOutputStream());
-            infromserver = new BufferedReader(new InputStreamReader(socket.getInputStream())) ;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
         if(connected){
             String send = Integer.toString(x) ;
             send= send+"\n" ;
@@ -117,15 +110,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
         }
     }
     public  int inputfromserver(){
-      /*  DataOutputStream outToServer = null;
-        BufferedReader infromserver = null ;
-        try {
-            outToServer = new DataOutputStream(socket.getOutputStream());
-            infromserver = new BufferedReader(new InputStreamReader(socket.getInputStream())) ;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */if(connected){
+        if(connected){
             try {
                 String inp =infromserver.readLine() ;
                 int ret = Integer.valueOf(inp) ;
@@ -137,10 +122,13 @@ public class Client extends AsyncTask<Void, Void, Void> {
         }
         else return -1 ;
     }
+
     @Override
     protected void onPostExecute(Void result) {
      //   textResponse.setText(response);
         super.onPostExecute(result);
+
     }
+
 
 }
