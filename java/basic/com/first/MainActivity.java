@@ -41,10 +41,11 @@ class preclass extends Thread
         th.gridview.post(new Runnable() {
             public void run() {
                 th.makechanges(rr);
-               // th.gridview.setAdapter(new ImageAdapter(th.a));
+                // th.gridview.setAdapter(new ImageAdapter(th.a));
             }
         });
 //
+
     } 
 }
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public  int tu1 = 1;
         public  int tu2;
         Client user;
-        public  int score;
+        public  int score = 0 ;
         String response;
         public GridView gridview;
         public Context a;
@@ -65,26 +66,17 @@ public class MainActivity extends AppCompatActivity {
                 score++;
                 gridview.setAdapter(new ImageAdapter(a));
             } else if (rr == 0) {
-                //Toast.makeText(MainActivity.this, "Game Over!"+score  ,
-                //      Toast.LENGTH_SHORT).show();score=0;
+             //   Toast.makeText(MainActivity.this, "Game Over!"+score  ,
+             //         Toast.LENGTH_SHORT).show();score=0;
             }
-            if (score >= 2) {
+            if (score > 2) {
                 boolean test = Parameters.checkEnd();
                 if (test) {
-                    //Toast.makeText(MainActivity.this, "Game Over!" + score,
-                    //      Toast.LENGTH_SHORT).show();
+             //       Toast.makeText(MainActivity.this, "Game Over!" + score,
+             //            Toast.LENGTH_SHORT).show();
                     score = 0;
                 }
             }
-        }
-
-        public void startgame() {
-            user.rec = true;
-            while (!user.updated) {
-
-            }
-            rr = Parameters.clicked(user.recval, tu2);
-            makechanges(rr);
         }
 
 
@@ -107,6 +99,15 @@ public class MainActivity extends AppCompatActivity {
             a = this;
             tu2 = (tu1 + 1) % 3 == 0 ? 1 : 2;
             score = 0;
+            if(tu1 == 2){
+                user.rec  = true ;
+                while(!user.updated){
+
+                }
+                user.updated = false;
+                rr = Parameters.clicked(user.recval, tu2);
+                makechanges(rr);
+            }
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v,
                                         int position, long id) {
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                     makechanges(rr);
                     user.sendval = position;
                     user.send = true;
-
                     preclass play2=new preclass(th);
                   //  play2.preclass1(th) ;
                     play2.start(); 
