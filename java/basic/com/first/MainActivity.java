@@ -18,12 +18,13 @@ import basic.com.*;
 
 class preclass extends Thread
 {
-    MainActivity th ;
-    Client user;
-    public void preclass1(MainActivity th1, Client user1)
+    MainActivity th=new MainActivity();
+    Client user;//=new Client("localhost", 45353, response);
+
+    public preclass(MainActivity th1)
     {
             th = th1 ;
-            user = user1 ;
+            user = th.user ;
     }
     @Override
     public void run()
@@ -32,15 +33,25 @@ class preclass extends Thread
             while (!user.updated) {
 
             }
-            int rr ;
+        user.updated=false;
+
+           final int rr ;
             rr = Parameters.clicked(user.recval,th.tu2);
-            th.makechanges(rr);               
+
+        th.gridview.post(new Runnable() {
+            public void run() {
+                th.makechanges(rr);
+               // th.gridview.setAdapter(new ImageAdapter(th.a));
+            }
+        });
+//
     } 
 }
 
 public class MainActivity extends AppCompatActivity {
+    public boolean check_player2=false;
 
-        public  int tu1 = 1;
+    public  int tu1 = 1;
         public  int tu2;
         Client user;
         public  int score;
@@ -75,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             rr = Parameters.clicked(user.recval, tu2);
             makechanges(rr);
         }
-    }
+
 
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -107,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
                     user.sendval = position;
                     user.send = true;
 
-                    preclass play2 = null;
-                    play2.preclass1(th , user) ;
+                    preclass play2=new preclass(th);
+                  //  play2.preclass1(th) ;
                     play2.start(); 
                 }
             });
