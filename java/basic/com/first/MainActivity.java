@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        user = new Client("localhost",45353,response);
+        user = new Client("10.8.16.26",6789,response);
        user.execute();
         while(!user.updated){
 
