@@ -60,7 +60,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            socket = new Socket("10.8.19.218", 6789);
+            socket = new Socket("10.8.16.26", 6789);
             connected = true;
              outToServer = new DataOutputStream(socket.getOutputStream());
              infromserver = new BufferedReader(new InputStreamReader(socket.getInputStream())) ;
