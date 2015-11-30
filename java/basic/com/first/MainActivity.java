@@ -38,26 +38,51 @@ class preclass extends Thread
         while(!user.updated){
                 long   currenttime =  System.nanoTime()  ;
                    currenttime /= TIMEMAX;
-            if(currenttime - starttime > 10 )break ;
+            if(currenttime - starttime > 20 )break ;
         }
         if(user.updated) {
             user.updated = false;
-
             final int rr;
             if(user.recval != -2)
             rr = Parameters.clicked(user.recval, th.tu2);
             else rr = -2 ;
             th.gridview.post(new Runnable() {
                 public void run() {
+                    long starttime = System.nanoTime();
+                    starttime /= TIMEMAX;
+                    while (!th.entered) {
+                        long currenttime = System.nanoTime();
+                        currenttime /= TIMEMAX;
+                        if (currenttime - starttime > 10) break;
+                    }
+                    if (!th.entered) {
+                        th.makechanges(rr);
+                        if (rr == -2) {
+                            if (th.tu1 == 1) {
+                                Toast.makeText(th, "Player 2 win (LATE Player 1 )!",
+                                        Toast.LENGTH_SHORT).show();
+                                th.score = 0;
+                            } else {
+                                Toast.makeText(th, "Player 1 win (LATE Player 2 )!",
+                                        Toast.LENGTH_SHORT).show();
+                                th.score = 0;
+                            }
+                            // th.gridview.setAdapter(new ImageAdapter(th.a));
+                        }
+                    }
+                }
+            });
+            th.gridview.post(new Runnable() {
+                public void run() {
                     th.current = th.tu2 ;
                     th.makechanges(rr);
                     if (rr == -2) {
                         if (th.tu1 == 1) {
-                            Toast.makeText(th, "Player 2 win (LATE Player 1 )!" + th.score,
+                            Toast.makeText(th, "Player 2 win (LATE Player 1 )!",
                                     Toast.LENGTH_SHORT).show();
                             th.score = 0;
                         } else {
-                            Toast.makeText(th, "Player 1 win (LATE Player 2 )!" + th.score,
+                            Toast.makeText(th, "Player 1 win (LATE Player 2 )!",
                                     Toast.LENGTH_SHORT).show();
                             th.score = 0;
                         }
@@ -91,7 +116,7 @@ class preclass extends Thread
 
 //
 
-    } 
+    }
 }
 
 public class MainActivity extends AppCompatActivity {
@@ -100,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         public  int tu2;
         Client user;
     int current = 0;
+    boolean entered = false;
         public  int score = 0 ;
         String response;
         public GridView gridview;
@@ -129,9 +155,17 @@ public class MainActivity extends AppCompatActivity {
             if (score > 2) {
                 boolean test = Parameters.checkEnd();
                 if (test) {
-             //       Toast.makeText(MainActivity.this, "Game Over!" + score,
-             //            Toast.LENGTH_SHORT).show();
-                    score = 0;
+                    if(current == 1) {
+                        Toast.makeText(MainActivity.this, "Player 1 wins !(Cleared Player 2)",
+                                Toast.LENGTH_SHORT).show();
+                        score = 0;
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "Player 2 wins !(Cleared Player 1)",
+                                Toast.LENGTH_SHORT).show();
+                        score = 0;
+                    }
+
                 }
             }
         }
@@ -173,12 +207,11 @@ public class MainActivity extends AppCompatActivity {
                     if (!user.rec) {
                         rr = Parameters.clicked(position, tu1);
                         if(rr !=-1) {
-
+                            entered  = true ;
                             current = tu1 ;
                             makechanges(rr);
                             user.sendval = position;
                             user.send = true;
-
                             preclass play2 = new preclass(th);
                             //  play2.preclass1(th) ;
                             play2.start();
